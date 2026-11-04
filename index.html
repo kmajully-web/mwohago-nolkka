@@ -1,0 +1,1520 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>뭐하고 놀까?</title>
+<meta name="description" content="집에 있는 재료로 아이랑 바로 하는 놀이 영상">
+<meta name="theme-color" content="#FFFEFA">
+
+<!-- 카톡·SNS 공유 미리보기: 앱 주소가 정해지면 [앱 주소] 두 곳을 바꿔요 -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="뭐하고 놀까?">
+<meta property="og:description" content="집에 있는 재료로 아이랑 바로 하는 놀이 영상">
+<meta property="og:image" content="https://[앱 주소]/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://[앱 주소]/">
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- 홈 화면 아이콘 -->
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="뭐하고 놀까">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FFFEFA;
+    --grid: #EEF1F6;
+    --desk: #ECE8E0;
+    --ink: #2E3440;
+    --muted: #4C566A;
+    --line: #E2E6EE;
+    --dash: #B9C0CC;
+    --coral: #CC4E33;
+    --coral-soft: #FFE3DB;
+    --yellow: #FFD35C;
+    --yellow-soft: #FFF1C9;
+    --mint: #3E9C7D;
+    --mint-ink: #1F5C48;
+    --mint-soft: #DDF3EA;
+    --sky: #2F72C4;
+    --sky-soft: #E3EEFC;
+    --violet: #8B5CC9;
+    --warn: #7A4E00;
+    --pink: #C2335B;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--desk); }
+  body {
+    margin: 0;
+    font-family: 'Gowun Dodum', sans-serif;
+    color: var(--ink);
+    -webkit-tap-highlight-color: transparent;
+  }
+  button { font-family: inherit; cursor: pointer; color: inherit; }
+  a { color: var(--sky); }
+  .jua { font-family: 'Jua', sans-serif; font-weight: 400; }
+
+  .app {
+    position: relative;
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background-color: var(--paper);
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 22px 22px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .app > * { position: relative; }
+  .spring { display: block; width: 100%; height: 34px; flex-shrink: 0; }
+  .doodles { position: absolute !important; inset: 0; pointer-events: none; opacity: .36; z-index: 0; }
+  .doodles svg { position: absolute; filter: url(#crayon); }
+
+  /* ---------- 홈 ---------- */
+  .hd { padding: 10px 20px 4px; display: flex; align-items: center; gap: 12px; }
+  .hdchar { width: 76px; height: 76px; flex-shrink: 0; object-fit: contain; }
+  .hd .sub { font-size: 13px; color: var(--muted); }
+  .hd h1 { margin: 2px 0 0; font-size: 34px; line-height: 1.1; }
+  .t1 { color: #D9483A; } .t2 { color: #C98A00; } .t3 { color: var(--mint); } .t4 { color: var(--sky); } .t5 { color: var(--violet); }
+
+  .pickbtn { width: calc(100% - 40px); margin: 12px 20px 0; min-height: 52px; border-radius: 16px; border: none; background: var(--yellow); font-size: 18px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .tabs { margin: 14px 20px 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; padding: 4px; background: #fff; border-radius: 16px; border: 1.5px solid var(--line); }
+  .tab { min-height: 42px; border-radius: 12px; border: none; background: transparent; color: var(--muted); font-size: 13px; padding: 0 2px; }
+  .tab.on { background: var(--coral); color: #fff; font-family: 'Jua', sans-serif; font-size: 16px; }
+
+  .homebar, .newbar, .notice { margin: 14px 20px 0; padding: 10px 8px 10px 14px; border-radius: 14px; display: flex; align-items: center; gap: 10px; font-size: 14px; }
+  .homebar { background: var(--sky-soft); color: #1F4677; }
+  .newbar { background: var(--yellow-soft); color: var(--warn); }
+  .notice { background: var(--yellow-soft); color: var(--warn); padding-right: 14px; line-height: 1.5; }
+  .homebar .txt, .newbar .txt { flex: 1; font-weight: 700; }
+  .homebar .txt { font-size: 13px; }
+  .homebar .minibtn { padding: 0 4px; }
+  .pill { font-size: 11px; font-weight: 700; color: #fff; background: var(--pink); border-radius: 10px; padding: 2px 8px; }
+  .minibtn { border: none; background: none; font-size: 13px; min-height: 36px; padding: 0 8px; text-decoration: underline; color: inherit; }
+
+  .views { margin: 14px 20px 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .view { min-height: 40px; border-radius: 12px; border: 2px dashed var(--dash); background: #fff; font-size: 14px; color: var(--muted); }
+  .view.on { border: 2px solid var(--ink); background: var(--ink); color: #fff; }
+
+  .sec { padding: 18px 20px 0; }
+  .sec h2 { margin: 0; font-family: 'Jua', sans-serif; font-weight: 400; font-size: 19px; }
+  .row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+  .count { font-size: 13px; color: var(--muted); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { min-height: 40px; padding: 0 14px; border-radius: 12px; border: 2px dashed var(--dash); background: #fff; font-size: 14px; }
+  .chip.on { border: 2px solid var(--mint); background: var(--mint-soft); color: var(--mint-ink); }
+  .chip.cat { min-height: 36px; font-size: 13px; }
+  .mgroup { margin-top: 10px; }
+  .mglabel { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .basebox { display: flex; align-items: center; gap: 10px; padding: 10px 10px 10px 12px; border-radius: 14px; background: #fff; border: 2px solid var(--line); }
+  .basetxt { flex: 1; font-size: 13px; line-height: 1.5; color: var(--muted); }
+  .basetxt b { color: var(--ink); }
+  .basebtn { flex-shrink: 0; min-height: 40px; padding: 0 12px; border-radius: 12px; border: 2px solid var(--mint); background: var(--mint-soft); color: var(--mint-ink); font-size: 13px; }
+  .sheet .mglabel { text-align: left; }
+  .chip.base.on { border-style: solid; border-color: var(--sky); background: var(--sky-soft); color: #1F4677; }
+  .chip.cat.on { border-color: #C98A00; background: var(--yellow-soft); color: var(--warn); }
+
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 12px; padding-top: 6px; }
+  .card { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 10px; border-radius: 6px; border: none; background: #fff; text-align: left; font-size: inherit; box-shadow: 0 1px 2px rgba(46,52,64,.08); }
+  .card.r0 { transform: rotate(-1.2deg); } .card.r1 { transform: rotate(1deg); } .card.r2 { transform: rotate(.8deg); } .card.r3 { transform: rotate(-.9deg); }
+  .tape { position: absolute; z-index: 2; height: 20px; width: 62px; mix-blend-mode: multiply;
+    background-image: repeating-linear-gradient(90deg, rgba(255,255,255,.22) 0 2px, transparent 2px 7px);
+    clip-path: polygon(3% 0, 97% 0, 100% 14%, 96% 30%, 100% 48%, 95% 66%, 100% 84%, 97% 100%, 3% 100%, 0 86%, 5% 68%, 0 50%, 4% 32%, 0 14%); }
+  .tape.k0 { left: 50%; top: -6px; margin-left: -31px; background-color: rgba(255,205,80,.62); transform: rotate(-3deg); }
+  .tape.k1 { right: -14px; top: 4px; width: 56px; height: 18px; background-color: rgba(126,182,240,.55); transform: rotate(38deg); }
+  .tape.k2 { left: -14px; top: 4px; width: 56px; height: 18px; background-color: rgba(108,195,166,.55); transform: rotate(-36deg); }
+  .tape.k3 { left: 50%; top: -6px; margin-left: -31px; background-color: rgba(242,121,94,.5); transform: rotate(4deg); }
+  .thumbwrap { position: relative; display: block; width: 100%; aspect-ratio: 16 / 9; border-radius: 4px; overflow: hidden; }
+  .thumbwrap.c0 { background: var(--coral-soft); } .thumbwrap.c1 { background: var(--mint-soft); } .thumbwrap.c2 { background: var(--sky-soft); } .thumbwrap.c3 { background: var(--yellow-soft); }
+  .thumbph { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--ink); opacity: .4; }
+  .thumb { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .thumb.fail { display: none; }
+  .badge { position: absolute; top: 6px; font-size: 11px; font-weight: 700; border-radius: 8px; padding: 2px 7px; }
+  .badge.new { left: 6px; background: #D9483A; color: #fff; }
+  .badge.fav { right: 6px; background: #fff; color: var(--pink); padding: 3px 5px; display: flex; }
+  .donemark { position: absolute; left: 6px; bottom: 6px; font-size: 11px; font-weight: 700; color: var(--mint-ink); background: var(--mint-soft); border-radius: 8px; padding: 2px 7px; }
+  .ytmark { position: absolute; right: 6px; bottom: 6px; font-size: 10px; color: #fff; background: rgba(46,52,64,.8); border-radius: 6px; padding: 1px 5px; }
+  .ctitle { font-family: 'Jua', sans-serif; font-size: 16px; line-height: 1.3; word-break: keep-all; }
+  .cmeta { font-size: 12px; color: var(--muted); line-height: 1.4; }
+  .need { font-size: 12px; color: var(--warn); background: var(--yellow-soft); border-radius: 8px; padding: 2px 8px; align-self: flex-start; }
+
+  .empty { padding: 18px 16px 20px; text-align: center; color: var(--muted); font-size: 14px; line-height: 1.6; background: #fff; border-radius: 16px; border: 2px dashed var(--line); display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .empty img { width: 92px; height: 92px; object-fit: contain; }
+
+  .shopcard { margin: 22px 20px 0; padding: 14px; border-radius: 16px; background: #fff; border: 2px solid var(--yellow); display: flex; flex-direction: column; gap: 10px; }
+  .disc { margin: 0; padding: 8px 10px; border-radius: 10px; background: var(--yellow-soft); color: var(--warn); font-size: 12px; line-height: 1.5; }
+  .shopbtn { min-height: 50px; border-radius: 14px; background: var(--yellow); color: var(--ink); display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-family: 'Jua', sans-serif; font-size: 17px; }
+
+  .ft { margin-top: auto; padding: 28px 20px 22px; font-size: 11px; line-height: 1.7; color: var(--muted); }
+  .ft p { margin: 0 0 6px; }
+  .ft .links { display: flex; flex-wrap: wrap; gap: 4px 12px; }
+  .ft a { color: var(--muted); }
+
+  /* ---------- 아래에서 올라오는 창 ---------- */
+  .layer { position: fixed; inset: 0; z-index: 60; background: rgba(46,52,64,.55); display: flex; align-items: flex-end; justify-content: center; }
+  .sheet { width: 100%; max-width: 480px; max-height: 92vh; overflow-y: auto; background: var(--paper); border-radius: 28px 28px 0 0; padding: 20px 20px calc(24px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 14px; }
+  .sheet h2 { margin: 0; font-family: 'Jua', sans-serif; font-weight: 400; font-size: 23px; text-align: center; }
+  .sheet p { margin: 0; font-size: 14px; line-height: 1.6; color: var(--muted); text-align: center; }
+  .sheetchar { width: 110px; height: 110px; object-fit: contain; align-self: center; }
+  .sheetbtns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .sbtn { min-height: 50px; border-radius: 16px; border: 2px solid var(--line); background: #fff; font-size: 15px; }
+  .sbtn.go { background: var(--yellow); border-color: var(--yellow); font-family: 'Jua', sans-serif; font-size: 17px; }
+  .sclose { border: none; background: none; color: var(--muted); font-size: 14px; min-height: 40px; }
+  .sheet .card { transform: none; }
+
+  .quiz { font-family: 'Jua', sans-serif; font-size: 44px; text-align: center; }
+  .answer { display: flex; justify-content: center; gap: 8px; }
+  .answer span { width: 56px; height: 64px; border-radius: 14px; border: 2px solid var(--line); background: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Jua', sans-serif; font-size: 30px; }
+  .answer.bad span { border-color: #D9483A; }
+  .msg { min-height: 20px; text-align: center; font-size: 13px; color: #B3361F; }
+  .pad { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .key { min-height: 54px; border-radius: 14px; border: none; background: #F1EEE7; font-family: 'Jua', sans-serif; font-size: 24px; }
+  .key.blank { visibility: hidden; }
+
+  /* ---------- 영상 보기 ---------- */
+  .ptop { padding: 6px 10px 0; display: flex; align-items: center; gap: 2px; }
+  .iconbtn { width: 44px; height: 44px; flex-shrink: 0; border: none; background: none; display: flex; align-items: center; justify-content: center; padding: 0; border-radius: 12px; }
+  .favbtn[aria-pressed="true"] { color: var(--pink); }
+  .lockbtn { width: auto; padding: 0 10px; gap: 4px; font-size: 13px; background: var(--sky-soft); color: #1F4677; }
+  .ptitle { flex: 1; margin: 0; font-family: 'Jua', sans-serif; font-weight: 400; font-size: 22px; line-height: 1.25; word-break: keep-all; }
+  .playwrap { margin: 8px 16px 0; }
+  .video { position: relative; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; background: #1C2230; border: 6px solid #fff; box-shadow: 0 1px 3px rgba(46,52,64,.15); }
+  .video iframe, .video #yt { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .err { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #E2E8F5; font-size: 14px; text-align: center; padding: 20px; line-height: 1.5; }
+  .err a { color: var(--yellow); }
+  .vsub { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 8px; }
+  .src { font-size: 12px; color: var(--muted); padding-left: 4px; }
+  .bigbtn { flex-shrink: 0; min-height: 36px; padding: 0 12px; border-radius: 18px; border: 2px dashed var(--dash); background: #fff; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+  .bigctrls { display: none; }
+
+  .bar { position: relative; height: 8px; border-radius: 4px; background: #E6E2DA; overflow: hidden; }
+  .bar .done { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: #B9C0CC; }
+  .bar .ab { position: absolute; top: 0; bottom: 0; width: 0; background: var(--yellow); }
+  .bar .pos { position: absolute; top: 0; bottom: 0; width: 3px; left: 0; background: var(--ink); }
+  .times { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .times .mid { color: var(--ink); font-weight: 700; text-align: center; }
+  .ctrls { display: flex; justify-content: center; align-items: flex-start; gap: 22px; margin-top: 16px; }
+  .cbtn { display: flex; flex-direction: column; align-items: center; gap: 4px; border: none; background: none; font-size: 12px; padding: 0; min-width: 68px; }
+  .cbtn .ic { width: 52px; height: 52px; border-radius: 26px; background: #fff; border: 2px solid var(--line); display: flex; align-items: center; justify-content: center; }
+  .cbtn.main .ic { width: 72px; height: 72px; border-radius: 36px; background: var(--yellow); border: none; }
+  .cbtn.rep .ic { background: var(--mint-soft); border-color: var(--mint); color: var(--mint-ink); }
+  .cbtn.rep.on .ic { background: var(--mint); color: #fff; }
+  .speeds { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 16px; }
+  .spd { min-height: 44px; border-radius: 12px; border: 2px dashed var(--dash); background: #fff; font-size: 14px; }
+  .spd.on { border: 2px solid var(--coral); background: var(--coral); color: #fff; font-family: 'Jua', sans-serif; font-size: 16px; }
+  .donebtn { width: 100%; margin-top: 16px; min-height: 50px; border-radius: 16px; border: 2px dashed var(--dash); background: #fff; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .donebtn[aria-pressed="true"] { border: 2px solid var(--mint); background: var(--mint-soft); color: var(--mint-ink); font-weight: 700; }
+
+  .mats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+  .mat { padding: 10px 4px; border-radius: 12px; background: #fff; border: 2px solid var(--line); text-align: center; font-size: 13px; word-break: keep-all; }
+  .mat small { display: block; font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .mat.no { background: var(--yellow-soft); border-color: #F2D98A; }
+  .mat.no small { color: var(--warn); }
+
+  .items { margin-top: 10px; background: #fff; border-radius: 16px; padding: 12px 0 12px 12px; border: 2px solid var(--line); }
+  .items .disc { margin: 0 12px 10px 0; }
+  .ilist { display: flex; gap: 10px; overflow-x: auto; padding-right: 12px; scrollbar-width: none; }
+  .ilist::-webkit-scrollbar { display: none; }
+  .item { flex: 0 0 148px; display: flex; flex-direction: column; border: 2px solid var(--line); border-radius: 14px; overflow: hidden; text-decoration: none; color: var(--ink); background: #fff; }
+  .item .iimg { width: 100%; aspect-ratio: 1; object-fit: cover; background: var(--paper); display: block; }
+  .item .iimg.fail { visibility: hidden; }
+  .item .ibody { padding: 8px 10px 10px; display: flex; flex-direction: column; gap: 2px; }
+  .item .iname { font-size: 13px; font-weight: 700; line-height: 1.35; word-break: keep-all; }
+  .item .idesc { font-size: 11px; color: var(--muted); line-height: 1.4; word-break: keep-all; }
+  .buyall { margin-top: 10px; }
+
+  /* ---------- 아이 모드 ---------- */
+  .kidbar { display: none; }
+  body.kid .nk { display: none !important; }
+  body.kid .kidbar { display: flex; margin: 12px 16px 0; padding: 10px 10px 10px 12px; border-radius: 16px; background: var(--sky-soft); align-items: center; gap: 10px; }
+  .kidbar img { width: 44px; height: 44px; object-fit: contain; }
+  .kidbar .txt { flex: 1; font-size: 14px; font-weight: 700; color: #1F4677; line-height: 1.4; }
+  .kidbar button { min-height: 44px; padding: 0 12px; border-radius: 12px; border: 2px solid #9CB9E3; background: #fff; font-size: 13px; color: #1F4677; }
+  body.kid .ctrls { margin-top: 20px; }
+
+  /* ---------- 크게 보기 ----------
+     유튜브 정책상 플레이어 위를 덮지 않고, 버튼은 영상 옆(가로) 또는 아래(세로)에 둡니다. */
+  body.big { overflow: hidden; }
+  body.big .playwrap { position: fixed; inset: 0; z-index: 40; margin: 0; background: #000; display: flex; flex-direction: column;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+  body.big .video { flex: 1; min-height: 0; aspect-ratio: auto; border: none; border-radius: 0; box-shadow: none; background: #000; }
+  body.big .vsub { display: none; }
+  body.big .bigctrls { display: flex; flex-shrink: 0; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; padding: 12px 12px 16px; background: #141820; }
+  @media (orientation: landscape) {
+    body.big .playwrap { flex-direction: row; }
+    body.big .bigctrls { flex-direction: column; flex-wrap: nowrap; width: 132px; padding: 10px 8px; overflow-y: auto; }
+    body.big .bcspeeds { display: grid; grid-template-columns: 1fr 1fr; }
+  }
+  .bc { min-width: 44px; min-height: 44px; border-radius: 22px; border: none; background: rgba(255,255,255,.14); color: #fff; display: flex; align-items: center; justify-content: center; gap: 4px; padding: 0 12px; font-size: 13px; }
+  .bc.main { background: var(--yellow); color: var(--ink); min-width: 56px; min-height: 56px; border-radius: 28px; }
+  .bc.on { background: var(--yellow); color: var(--ink); font-weight: 700; }
+  .bcspeeds { display: flex; gap: 4px; }
+  .bcspeeds .bc { padding: 0 10px; }
+  .bcab { color: #fff; font-size: 12px; text-align: center; }
+  .bc.kidonly { display: none; }
+  body.kid .bc.kidonly { display: flex; }
+
+  /* ---------- 안내 페이지 ---------- */
+  .page { padding: 4px 20px 0; line-height: 1.7; font-size: 15px; }
+  .page h2 { margin: 22px 0 8px; font-family: 'Jua', sans-serif; font-weight: 400; font-size: 20px; }
+  .page p, .page ul, .page ol { margin: 0 0 10px; }
+  .page ul, .page ol { padding-left: 22px; }
+  .page li { margin-bottom: 4px; }
+  .page .box { background: #fff; border: 2px solid var(--line); border-radius: 16px; padding: 14px 16px; margin-bottom: 12px; }
+  .page .box.hi { border-color: var(--yellow); }
+  .page .tip { font-size: 13px; color: var(--muted); }
+  .page .installbtn { width: 100%; min-height: 50px; border-radius: 16px; border: none; background: var(--yellow); font-family: 'Jua', sans-serif; font-size: 17px; margin-bottom: 12px; }
+  .page b { font-weight: 700; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position: absolute" aria-hidden="true">
+  <defs>
+    <filter id="crayon" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7" result="n"></feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.4"></feDisplacementMap>
+    </filter>
+    <pattern id="coil" x="7" y="0" width="24" height="34" patternUnits="userSpaceOnUse">
+      <circle cx="12" cy="24" r="3.8" fill="#DCD6CC"></circle>
+      <circle cx="12" cy="24.6" r="2.4" fill="#B8B0A3"></circle>
+      <path d="M9.4 23.5V7.5a2.6 2.6 0 0 1 5.2 0V21" fill="none" stroke="#7F8794" stroke-width="2.8" stroke-linecap="round"></path>
+      <path d="M10.4 20V8a1.6 1.6 0 0 1 1.8-1.6" fill="none" stroke="#E3E7ED" stroke-width="1" stroke-linecap="round"></path>
+    </pattern>
+  </defs>
+</svg>
+
+<div class="app" id="app"></div>
+<div id="layer"></div>
+
+<script>
+/* =========================================================
+   설정 — 여기만 고치면 됩니다
+   ========================================================= */
+const CONFIG = {
+  // 구글 시트 "놀이 목록" 탭을 웹에 게시(CSV)한 주소. 비워두면 아래 예시 목록으로 동작해요.
+  SHEET_CSV_URL: '',
+  // 구글 시트 "추천템" 탭을 웹에 게시(CSV)한 주소. 비워두면 공통 쿠팡 링크만 보여요.
+  ITEMS_CSV_URL: '',
+  // 모든 놀이에 공통으로 쓰는 쿠팡 파트너스 링크
+  COUPANG_URL: 'https://link.coupang.com/a/iphw4uGy3o',
+  APP_NAME: '뭐하고 놀까?',
+  CONTACT: '[문의 이메일]',
+  DEFAULT_AGE: '2~3세',
+  NEW_DAYS: 14
+};
+
+const AGES = ['12~24개월', '2~3세', '4~5세', '6~7세'];
+const SPEEDS = [0.5, 0.75, 1, 1.25];
+const VIEWS = [['all', '전체'], ['fav', '즐겨찾기'], ['todo', '안 해본 것']];
+const STORE_KEY = 'play-app-v3';
+
+/* 크레파스 친구들 */
+const CHARS = {
+  bunny:   { src: 'bunny.png',   name: '토끼' },
+  bear:    { src: 'bear.png',    name: '곰' },
+  raccoon: { src: 'raccoon.png', name: '너구리' },
+  crayon:  { src: 'crayon.png',  name: '크레파스' }
+};
+const AGE_CHAR = { '12~24개월': 'bunny', '2~3세': 'bear', '4~5세': 'raccoon', '6~7세': 'crayon' };
+const DISCLOSURE = '이 게시물은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.';
+
+/* 재료 버튼 묶음 — 여기에 없는 재료는 "그 밖의 재료"로 들어가요 */
+const MAT_GROUPS = [
+  ['재활용품', ['휴지심', '종이컵', '페트병', '박스', '신문지', '비닐봉지', '종이접시', '플라스틱 통', '우유갑', '지퍼백', '요구르트병']],
+  ['문구·미술', ['종이', '색종이', '가위', '풀', '테이프', '크레파스', '사인펜', '색연필', '물감', '스티커', '고무줄', '실', '솜공', '슬라임', '방울', '클레이']],
+  ['생활·주방', ['빨대', '나무젓가락', '풍선', '스카프', '수건', '이불', '쟁반', '그릇', '물', '얼음', '감자', '미역', '밀가루']]
+];
+const OTHER_GROUP = '그 밖의 재료';
+
+const SAMPLE_CSV = `놀이 이름,유튜브 주소,나이,필요한 재료,소요시간,분류,채널명,추가일
+알록달록 종이컵 오감놀이,https://www.youtube.com/watch?v=VU9v6LUH6kA,12~24개월,종이컵,약 10분,감각,[채널명 확인],2026-10-01
+여러 가지 신문 놀이,https://www.youtube.com/watch?v=6chqnb8PfD8,"12~24개월, 2~3세",신문지,약 15분,감각,[채널명 확인],2026-10-01
+감각통 놀이,https://www.youtube.com/watch?v=UQiZtl-z1Hs,12~24개월,플라스틱 통,약 10분,감각,[채널명 확인],2026-10-01
+둥글둥글 감자놀이,https://www.youtube.com/watch?v=vgQ_fvv0FpQ,"12~24개월, 2~3세",감자,약 15분,감각,의왕시육아종합지원센터,2026-10-01
+미끌미끌 미역놀이,https://www.youtube.com/watch?v=QHT7D04ZeLU,"12~24개월, 2~3세",미역,약 15분,감각,의왕시육아종합지원센터,2026-10-01
+솜공 녹이기 놀이,https://www.youtube.com/watch?v=e3jX1Pgzs4o,2~3세,"솜공, 물",약 10분,감각,[채널명 확인],2026-10-01
+슬라임 괴물 놀이,https://www.youtube.com/watch?v=oP4DmyrWuN8,2~3세,슬라임,약 10분,감각,[채널명 확인],2026-10-01
+풍선 색깔 놀이,https://www.youtube.com/watch?v=THSnb4MQStk,"2~3세, 4~5세",풍선,약 10분,감각,[채널명 확인],2026-10-01
+휴지심 모양 만들기,https://www.youtube.com/watch?v=mpiUMBmTdCw,"12~24개월, 2~3세",휴지심,약 10분,미술,[채널명 확인],2026-10-01
+테이프 그림 놀이,https://www.youtube.com/watch?v=nHw88qIqeM0,"12~24개월, 2~3세","테이프, 종이",약 10분,미술,[채널명 확인],2026-10-01
+휴지심 강아지 만들기,https://www.youtube.com/watch?v=wrlBCkh1Sh4,2~3세,"휴지심, 색종이, 풀",약 15분,미술,[채널명 확인],2026-10-01
+휴지심으로 찍는 폭죽놀이,https://www.youtube.com/watch?v=SiTulS7ULos,"2~3세, 4~5세","휴지심, 물감, 종이",약 15분,미술,[채널명 확인],2026-10-01
+휴지심 선인장 만들기,https://www.youtube.com/watch?v=KS_7S77jV70,"4~5세, 6~7세","휴지심, 색종이, 풀",약 20분,미술,늘다님놀이,2026-10-01
+휴지심 닭 만들기,https://www.youtube.com/watch?v=D0bW1HxpWNw,"4~5세, 6~7세","휴지심, 색종이, 풀",약 20분,미술,늘다님놀이,2026-10-01
+스크래치 그림 그리기,https://www.youtube.com/watch?v=yIAan_MQquA,"4~5세, 6~7세","크레파스, 종이",약 20분,미술,[채널명 확인],2026-10-01
+종이접시 미술놀이 5가지,https://www.youtube.com/watch?v=zRdZ1dBk9BI,"4~5세, 6~7세","종이접시, 크레파스, 가위, 풀",약 20분,미술,[채널명 확인],2026-10-01
+휴지심 마이크 만들기,https://www.youtube.com/watch?v=GywFiUjLFas,"4~5세, 6~7세","휴지심, 색종이, 풀","약 15분","미술, 역할놀이",[채널명 확인],2026-10-01
+풍선 놀이,https://www.youtube.com/watch?v=JL50EbXeux8,"12~24개월, 2~3세",풍선,약 10분,신체,[채널명 확인],2026-10-01
+종이컵 쌓기 놀이,https://www.youtube.com/watch?v=3-O5C4ZO_AE,"2~3세, 4~5세",종이컵,약 10분,신체,[채널명 확인],2026-10-01
+신문지 밟기 놀이,https://www.youtube.com/watch?v=ZT5cGqtv-1g,"2~3세, 4~5세",신문지,약 10분,신체,[채널명 확인],2026-10-01
+스카프 파라슈트 놀이,https://www.youtube.com/watch?v=VOkqzw06cDU,"2~3세, 4~5세",스카프,약 10분,신체,[채널명 확인],2026-10-01
+아빠표 10분 신체놀이,https://www.youtube.com/watch?v=3T1xiZbYaEM,"2~3세, 4~5세, 6~7세",,약 10분,신체,한솔어린이보육재단,2026-10-01
+신문지 활용 신체놀이,https://www.youtube.com/watch?v=23W2JCgLgLQ,"4~5세, 6~7세",신문지,약 15분,신체,동작구체육회,2026-10-01
+종이컵 옮기기·빨대로 종이 옮기기,https://www.youtube.com/watch?v=FehXze2WQoI,"4~5세, 6~7세","종이컵, 빨대, 종이",약 15분,신체,성북구도시관리공단,2026-10-01
+박 터트리기,https://www.youtube.com/watch?v=8FibNIMTYns,"4~5세, 6~7세","신문지, 테이프",약 15분,신체,[채널명 확인],2026-10-01
+휴지심 고무줄총 종이컵 쓰러뜨리기,https://www.youtube.com/watch?v=rXudTAqGhPg,6~7세,"휴지심, 고무줄, 종이컵",약 20분,신체,[채널명 확인],2026-10-01
+빵빵한 공기인형,https://www.youtube.com/watch?v=Fa_EG7baqRo,"2~3세, 4~5세",비닐봉지,약 10분,과학,[채널명 확인],2026-10-01
+방귀 뀌는 풍선,https://www.youtube.com/watch?v=mH4LdU5Ccec,"4~5세, 6~7세",풍선,약 10분,과학,[채널명 확인],2026-10-01
+빨대 놀이,https://www.youtube.com/watch?v=kV1o0hroVkE,"4~5세, 6~7세",빨대,약 10분,과학,[채널명 확인],2026-10-01
+종이컵 바람개비,https://www.youtube.com/watch?v=hyg4RC8A90k,"4~5세, 6~7세","종이컵, 빨대, 가위",약 15분,과학,[채널명 확인],2026-10-01
+착시 바람개비 놀이,https://www.youtube.com/watch?v=6IO5-WTVNXo,"4~5세, 6~7세","색종이, 빨대",약 15분,과학,[채널명 확인],2026-10-01
+빨대로켓 놀이,https://www.youtube.com/watch?v=WSbSPHZKVQk,"4~5세, 6~7세","빨대, 종이, 테이프",약 15분,과학,플레이송스,2026-10-01
+휴지심 종이컵 폭죽,https://www.youtube.com/watch?v=Gg0FDM17tq0,"4~5세, 6~7세","휴지심, 종이컵, 풍선",약 15분,과학,[채널명 확인],2026-10-01
+풍선대포 만들기,https://www.youtube.com/watch?v=EonydJDgvwE,"4~5세, 6~7세","종이컵, 풍선",약 15분,과학,[채널명 확인],2026-10-01
+잠수함 놀이,https://www.youtube.com/watch?v=QzrdclmGqw0,6~7세,페트병,약 15분,과학,[채널명 확인],2026-10-01
+나무젓가락 팽이,https://www.youtube.com/watch?v=6fnlvU2Jr44,6~7세,"나무젓가락, 종이",약 15분,과학,[채널명 확인],2026-10-01
+박스 놀이,https://www.youtube.com/watch?v=IpjWWUHoRCg,"12~24개월, 2~3세",박스,약 15분,"역할놀이, 신체",[채널명 확인],2026-10-01
+유아기 역할놀이 해보기,https://www.youtube.com/watch?v=Up4M8lKiaHA,"2~3세, 4~5세",,약 15분,역할놀이,[채널명 확인],2026-10-01
+박스로 인형집 만들기,https://www.youtube.com/watch?v=y4pvQPCyBuc,"4~5세, 6~7세","박스, 가위, 테이프",약 30분,역할놀이,[채널명 확인],2026-10-01
+색종이 아이스크림 소꿉놀이,https://www.youtube.com/watch?v=Zl2u55kUuzg,"4~5세, 6~7세",색종이,약 15분,역할놀이,[채널명 확인],2026-10-01
+방울악기 만들기,https://www.youtube.com/watch?v=kaAvXd8W6p0,"2~3세, 4~5세","종이접시, 방울",약 15분,음악·율동,[채널명 확인],2026-10-01
+노래하는 종달새 마라카스,https://www.youtube.com/watch?v=HceaYbvLlTk,"4~5세, 6~7세",페트병,약 15분,음악·율동,[채널명 확인],2026-10-01
+마라카스 악기 만들기,https://www.youtube.com/watch?v=hi4i7wJJcJU,"4~5세, 6~7세","페트병, 테이프",약 15분,음악·율동,호매실장애인종합복지관,2026-10-01
+뿌우뿌우 코끼리 피리,https://www.youtube.com/watch?v=31m_damjDtQ,"4~5세, 6~7세","빨대, 종이",약 15분,음악·율동,부천시육아종합지원센터,2026-10-01
+전통악기 만들기 4가지,https://www.youtube.com/watch?v=9fROP_bM1AM,6~7세,"종이컵, 고무줄",약 20분,음악·율동,[채널명 확인],2026-10-01
+머리가 좋아지는 음악 놀이,https://www.youtube.com/watch?v=XRmWYABWA0c,"12~24개월, 2~3세",,약 10분,음악·율동,[채널명 확인],2026-10-01
+비닐봉지 집콕놀이,https://www.youtube.com/watch?v=kDCw-7kk8Ic,12~24개월,비닐봉지,약 10분,감각,[채널명 확인],2026-10-01
+얼음 감각놀이,https://www.youtube.com/watch?v=HoaBn599vBg,"12~24개월, 2~3세",얼음,약 10분,감각,[채널명 확인],2026-10-01
+폼폼이로 하는 6가지 놀이,https://www.youtube.com/watch?v=cV62eYeDuDw,"4~5세, 6~7세",솜공,약 15분,"감각, 신체",[채널명 확인],2026-10-01
+`;
+
+/* =========================================================
+   아이콘
+   ========================================================= */
+const ICON = {
+  back: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>',
+  rewind: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>',
+  pause: '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>',
+  play: '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>',
+  repeat: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg>',
+  heart: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>',
+  heartFill: '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>',
+  heartSm: '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>',
+  dice: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.2" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg>',
+  expand: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5"/><path d="M20 9V4h-5"/><path d="M4 15v5h5"/><path d="M20 15v5h-5"/></svg>',
+  close: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  check: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>',
+  lock: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+  unlock: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.8-1.2"/></svg>',
+  cart: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2l2.4 11h11.2l2-8H6.2"/></svg>',
+  playSm: '<svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>',
+  erase: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5H9l-6 7 6 7h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1z"/><path d="M17 9l-6 6M11 9l6 6"/></svg>'
+};
+
+const SPRING = '<svg class="spring" aria-hidden="true" viewBox="0 0 480 34" preserveAspectRatio="xMinYMin slice"><rect width="480" height="12" fill="#ECE8E0"></rect><rect y="12" width="480" height="1.5" fill="#E2DCD1"></rect><rect width="480" height="34" fill="url(#coil)"></rect></svg>';
+
+const DOODLES = `<div class="doodles" aria-hidden="true">
+  <svg width="46" height="62" viewBox="0 0 46 62" style="right: 14px; top: 140px"><ellipse cx="23" cy="22" rx="16" ry="19" fill="none" stroke="#F2795E" stroke-width="3"></ellipse><path d="M23 41c-3 6 4 10 0 18" fill="none" stroke="#F2795E" stroke-width="2.4" stroke-linecap="round"></path></svg>
+  <svg width="54" height="54" viewBox="0 0 54 54" style="left: 4px; top: 330px"><circle cx="27" cy="27" r="6" fill="none" stroke="#FFC23D" stroke-width="3"></circle><path d="M27 10a7 7 0 0 1 0 11M27 44a7 7 0 0 1 0-11M10 27a7 7 0 0 1 11 0M44 27a7 7 0 0 1-11 0" fill="none" stroke="#6CC3A6" stroke-width="3" stroke-linecap="round"></path></svg>
+  <svg width="60" height="34" viewBox="0 0 60 34" style="right: 10px; top: 620px"><path d="M4 26l10-18 10 18 10-18 10 18 10-18" fill="none" stroke="#7EB6F0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+  <svg width="40" height="40" viewBox="0 0 40 40" style="left: 12px; top: 900px"><path d="M20 4l4 11h12l-10 7 4 12-10-7-10 7 4-12L4 15h12z" fill="none" stroke="#B68AE0" stroke-width="3" stroke-linejoin="round"></path></svg>
+  <svg width="44" height="40" viewBox="0 0 44 40" style="right: 18px; top: 1180px"><path d="M22 34S6 24 6 14a8 8 0 0 1 16-4 8 8 0 0 1 16 4c0 10-16 20-16 20z" fill="none" stroke="#F2795E" stroke-width="3" stroke-linejoin="round"></path></svg>
+  <svg width="70" height="34" viewBox="0 0 70 34" style="left: 16px; top: 1460px"><path d="M14 30h40a10 10 0 0 0 0-20 14 14 0 0 0-26-4 10 10 0 0 0-16 6A9 9 0 0 0 14 30z" fill="none" stroke="#7EB6F0" stroke-width="3" stroke-linecap="round"></path></svg>
+</div>`;
+
+/* =========================================================
+   도우미
+   ========================================================= */
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function parseCSV(text) {
+  const rows = [];
+  let row = [], field = '', inQuotes = false;
+  text = String(text || '').replace(/^﻿/, '');
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; }
+        else inQuotes = false;
+      } else field += c;
+    } else if (c === '"') inQuotes = true;
+    else if (c === ',') { row.push(field); field = ''; }
+    else if (c === '\n' || c === '\r') {
+      if (c === '\r' && text[i + 1] === '\n') i++;
+      row.push(field); rows.push(row); row = []; field = '';
+    } else field += c;
+  }
+  if (field !== '' || row.length) { row.push(field); rows.push(row); }
+  return rows.filter(r => r.some(v => v.trim() !== ''));
+}
+
+function splitList(s) {
+  return String(s || '').split(/[,，、\/]/).map(v => v.trim()).filter(Boolean);
+}
+
+function videoIdOf(url) {
+  const s = String(url || '').trim();
+  const m = s.match(/(?:v=|youtu\.be\/|shorts\/|embed\/|live\/)([A-Za-z0-9_-]{11})/);
+  if (m) return m[1];
+  return /^[A-Za-z0-9_-]{11}$/.test(s) ? s : '';
+}
+
+function safeLink(url) {
+  const s = String(url || '').trim();
+  return /^https:\/\//i.test(s) ? s : '';
+}
+
+function parseDate(s) {
+  const m = String(s || '').match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/);
+  if (!m) return '';
+  return m[1] + '-' + m[2].padStart(2, '0') + '-' + m[3].padStart(2, '0');
+}
+
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+function daysBetween(a, b) {
+  return Math.round((new Date(b + 'T00:00:00') - new Date(a + 'T00:00:00')) / 86400000);
+}
+
+function tableOf(rows) {
+  if (!rows.length) return [];
+  const header = rows[0].map(h => h.trim());
+  return rows.slice(1).map(r => {
+    const o = {};
+    header.forEach((h, i) => { o[h] = (r[i] || '').trim(); });
+    return o;
+  });
+}
+
+function toPlays(rows) {
+  const seen = new Set();
+  return tableOf(rows).map(r => ({
+    id: videoIdOf(r['유튜브 주소']),
+    title: r['놀이 이름'] || '',
+    ages: splitList(r['나이']),
+    mats: splitList(r['필요한 재료']),
+    time: r['소요시간'] || '',
+    cats: splitList(r['분류']),
+    channel: r['채널명'] || '',
+    added: parseDate(r['추가일'])
+  })).filter(p => {
+    if (!p.title || !p.id || seen.has(p.id)) return false;
+    seen.add(p.id);
+    return true;
+  });
+}
+
+function toItems(rows) {
+  return tableOf(rows).map(r => ({
+    play: r['놀이 이름'] || '',
+    name: r['상품명'] || '',
+    desc: r['한 줄 설명'] || '',
+    img: safeLink(r['상품 이미지 주소']),
+    link: safeLink(r['쿠팡 링크'])
+  })).filter(it => it.play && it.name && it.link);
+}
+
+function fmt(sec) {
+  sec = Math.max(0, Math.floor(sec || 0));
+  return Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0');
+}
+
+function charImg(key, cls) {
+  const c = CHARS[key] || CHARS.bear;
+  return `<img class="${cls}" src="${c.src}" alt="${esc(c.name)} 친구">`;
+}
+
+function isStandalone() {
+  try {
+    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  } catch (e) { return false; }
+}
+
+function deviceKind() {
+  const ua = navigator.userAgent || '';
+  if (/KAKAOTALK/i.test(ua)) return 'kakao';
+  if (/iPhone|iPad|iPod/i.test(ua)) return 'ios';
+  if (/Android/i.test(ua)) return 'android';
+  return 'other';
+}
+
+/* =========================================================
+   저장 (이 폰의 브라우저에만 저장돼요)
+   ========================================================= */
+function loadSaved() {
+  try {
+    const v = JSON.parse(localStorage.getItem(STORE_KEY) || '{}');
+    return v && typeof v === 'object' ? v : {};
+  } catch (e) { return {}; }
+}
+
+function save() {
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify({
+      age: state.age, selected: [...state.selected], view: state.view, cat: state.cat,
+      done: [...state.done], fav: [...state.fav], seenNew: state.seenNew,
+      kid: state.kid, homeTipClosed: state.homeTipClosed, base: [...state.base]
+    }));
+  } catch (e) { /* 저장이 막힌 브라우저에서는 그냥 넘어가요 */ }
+}
+
+/* =========================================================
+   상태
+   ========================================================= */
+const saved = loadSaved();
+const asArr = v => (Array.isArray(v) ? v : []);
+const state = {
+  plays: [],
+  items: [],
+  loadError: false,
+  age: AGES.includes(saved.age) ? saved.age : CONFIG.DEFAULT_AGE,
+  selected: new Set(asArr(saved.selected)),
+  view: VIEWS.some(v => v[0] === saved.view) ? saved.view : 'all',
+  cat: typeof saved.cat === 'string' ? saved.cat : '',
+  done: new Set(asArr(saved.done)),
+  fav: new Set(asArr(saved.fav)),
+  seenNew: typeof saved.seenNew === 'string' ? saved.seenNew : '',
+  kid: typeof saved.kid === 'string' ? saved.kid : null,   // 아이 모드로 잠근 영상
+  homeTipClosed: saved.homeTipClosed === true,
+  base: new Set(asArr(saved.base)),   // 우리 집에 늘 있는 재료
+  picked: null,
+  quiz: null
+};
+
+const appEl = document.getElementById('app');
+const layerEl = document.getElementById('layer');
+let cameFromHome = false;
+let returnHash = '';
+let installPrompt = null;
+
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installPrompt = e; });
+
+/* =========================================================
+   목록 거르기
+   ========================================================= */
+function isNew(p) {
+  if (!p.added) return false;
+  const d = daysBetween(p.added, todayStr());
+  return d >= 0 && d < CONFIG.NEW_DAYS;
+}
+
+function playsForAge() {
+  return state.plays.filter(p => p.ages.length === 0 || p.ages.includes(state.age));
+}
+
+function catsForAge() {
+  const set = new Set();
+  playsForAge().forEach(p => p.cats.forEach(c => set.add(c)));
+  return [...set];
+}
+
+function filteredPlays() {
+  return playsForAge().filter(p =>
+    (state.view !== 'fav' || state.fav.has(p.id)) &&
+    (state.view !== 'todo' || !state.done.has(p.id)) &&
+    (!state.cat || p.cats.includes(state.cat))
+  );
+}
+
+function materialsFor(list) {
+  const counts = new Map();
+  list.forEach(p => p.mats.forEach(m => counts.set(m, (counts.get(m) || 0) + 1)));
+  state.selected.forEach(m => { if (!counts.has(m)) counts.set(m, 0); });
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ko'))
+    .map(e => e[0]);
+}
+
+function allMaterials() {
+  const set = new Set();
+  state.plays.forEach(p => p.mats.forEach(m => set.add(m)));
+  state.base.forEach(m => set.add(m));
+  return [...set].sort((a, b) => a.localeCompare(b, 'ko'));
+}
+
+function groupOf(m) {
+  const g = MAT_GROUPS.find(([, list]) => list.includes(m));
+  return g ? g[0] : OTHER_GROUP;
+}
+
+function groupMaterials(mats) {
+  const order = MAT_GROUPS.map(g => g[0]).concat(OTHER_GROUP);
+  const map = new Map(order.map(n => [n, []]));
+  mats.forEach(m => map.get(groupOf(m)).push(m));
+  return order.map(n => [n, map.get(n)]).filter(([, list]) => list.length);
+}
+
+// 고른 재료 + 늘 있는 재료
+function owned() {
+  return new Set([...state.selected, ...state.base]);
+}
+
+function splitByMaterials(list) {
+  const own = owned(), ready = [], near = [];
+  list.forEach(p => {
+    const missing = p.mats.filter(m => !own.has(m));
+    if (missing.length === 0) ready.push(p);
+    else if (missing.length === 1 && p.mats.some(m => own.has(m))) near.push({ p, missing: missing[0] });
+  });
+  return { ready, near };
+}
+
+function newInfo() {
+  const news = playsForAge().filter(isNew);
+  const latest = news.reduce((m, p) => (p.added > m ? p.added : m), '');
+  return { count: news.length, latest, show: news.length > 0 && latest > state.seenNew };
+}
+
+/* =========================================================
+   공통 조각
+   ========================================================= */
+function cardHTML(p, missing, i) {
+  const n = (i || 0) % 4;
+  const meta = [p.time, p.mats.join(', ')].filter(Boolean).join(' · ');
+  return `
+    <button type="button" class="card r${n}" data-play="${esc(p.id)}">
+      <span class="tape k${n}" aria-hidden="true"></span>
+      <span class="thumbwrap c${n}">
+        <span class="thumbph">${ICON.playSm}</span>
+        <img class="thumb" src="https://img.youtube.com/vi/${esc(p.id)}/mqdefault.jpg" alt="" loading="lazy" data-thumb>
+        ${isNew(p) ? '<span class="badge new">NEW</span>' : ''}
+        ${state.fav.has(p.id) ? `<span class="badge fav" aria-label="즐겨찾기">${ICON.heartSm}</span>` : ''}
+        ${state.done.has(p.id) ? '<span class="donemark">해봤어요</span>' : ''}
+        <span class="ytmark">YouTube</span>
+      </span>
+      <span class="ctitle">${esc(p.title)}</span>
+      ${meta ? `<span class="cmeta">${esc(meta)}</span>` : ''}
+      ${missing ? `<span class="need">${esc(missing)} 더 필요</span>` : ''}
+    </button>`;
+}
+
+function emptyHTML(text) {
+  return `<div class="empty">${charImg('bunny', '')}<span>${text}</span></div>`;
+}
+
+function shopHTML(label) {
+  if (!safeLink(CONFIG.COUPANG_URL)) return '';
+  return `
+    <p class="disc">${DISCLOSURE}</p>
+    <a class="shopbtn" href="${esc(CONFIG.COUPANG_URL)}" target="_blank" rel="noopener sponsored">${ICON.cart}${esc(label)}</a>`;
+}
+
+function footerHTML(extra) {
+  return `
+    <footer class="ft nk">
+      <p>이 서비스의 일부 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
+      <p>영상은 YouTube에서 재생돼요. 각 채널의 공식 서비스가 아닌, 개인이 만든 무료 도구예요.</p>
+      <p class="links">
+        <a href="#info" data-sub>이용 안내</a>
+        <a href="#guide-home" data-sub>홈 화면에 추가하는 법</a>
+        <a href="#guide-lock" data-sub>휴대폰 잠금 방법</a>
+      </p>
+      ${extra || ''}
+    </footer>`;
+}
+
+/* =========================================================
+   홈 화면
+   ========================================================= */
+function renderHome() {
+  const list = filteredPlays();
+  const mats = materialsFor(playsForAge()).filter(m => !state.base.has(m));
+  const cats = catsForAge();
+  const sel = state.selected;
+  const ni = newInfo();
+  if (state.cat && !cats.includes(state.cat)) state.cat = '';
+
+  const emptyByView = {
+    all: '이 나이에 맞는 놀이가 아직 없어요.',
+    fav: '아직 즐겨찾기한 놀이가 없어요.<br>놀이 화면에서 하트를 눌러보세요.',
+    todo: '이 조건의 놀이는 모두 해봤어요!'
+  };
+
+  let results = '';
+  if (!state.plays.length) {
+    results = emptyHTML(state.loadError
+      ? '놀이 목록을 불러오지 못했어요.<br>잠시 뒤에 다시 열어주세요.'
+      : '놀이 목록을 불러오는 중이에요.');
+  } else if (sel.size === 0) {
+    results = `
+      <div class="row"><h2>${esc(state.age)} 놀이</h2><span class="count">${list.length}개</span></div>
+      ${list.length ? `<div class="grid">${list.map((p, i) => cardHTML(p, '', i)).join('')}</div>` : emptyHTML(emptyByView[state.view])}`;
+  } else {
+    const { ready, near } = splitByMaterials(list);
+    results = `
+      <div class="row"><h2>이 재료로 할 수 있어요</h2><span class="count">${ready.length}개</span></div>
+      ${ready.length ? `<div class="grid">${ready.map((p, i) => cardHTML(p, '', i)).join('')}</div>`
+                     : emptyHTML('고른 재료만으로 할 수 있는 놀이는 아직 없어요.<br>재료를 하나 더 골라보세요.')}
+      ${near.length ? `
+        <div class="row" style="margin-top:22px"><h2>하나만 더 있으면 돼요</h2><span class="count">${near.length}개</span></div>
+        <div class="grid">${near.map((n, i) => cardHTML(n.p, n.missing, i + 1)).join('')}</div>` : ''}`;
+  }
+
+  const showHomeTip = !state.homeTipClosed && !isStandalone();
+  const shop = shopHTML('놀이 재료 한 번에 사기');
+
+  appEl.innerHTML = `
+    ${SPRING}
+    ${DOODLES}
+    <header class="hd">
+      ${charImg(AGE_CHAR[state.age], 'hdchar')}
+      <div>
+        <div class="sub">오늘의 놀이 스케치북</div>
+        <h1 class="jua"><span class="t1">뭐</span><span class="t2">하</span><span class="t3">고</span> <span class="t4">놀</span><span class="t5">까</span>?</h1>
+      </div>
+    </header>
+
+    <button type="button" class="pickbtn jua" data-pick>${ICON.dice}오늘의 놀이 골라줘</button>
+
+    <div class="tabs" role="tablist" aria-label="아이 나이">
+      ${AGES.map(a => `<button type="button" role="tab" class="tab${a === state.age ? ' on' : ''}" aria-selected="${a === state.age}" data-age="${esc(a)}">${esc(a)}</button>`).join('')}
+    </div>
+
+    ${showHomeTip ? `
+      <div class="homebar">
+        <span class="txt">홈 화면에 앱처럼 추가해요</span>
+        <a class="minibtn" href="#guide-home" data-sub>방법 보기</a>
+        <button type="button" class="minibtn" data-close-hometip>닫기</button>
+      </div>` : ''}
+
+    ${state.loadError && state.plays.length ? '<div class="notice">최신 목록을 불러오지 못해 예시 목록을 보여드리고 있어요.</div>' : ''}
+
+    ${ni.show ? `
+      <div class="newbar">
+        <span class="pill">NEW</span>
+        <span class="txt">새 놀이 ${ni.count}개가 들어왔어요</span>
+        <button type="button" class="minibtn" data-seen-new>확인했어요</button>
+      </div>` : ''}
+
+    <div class="views" role="group" aria-label="보기">
+      ${VIEWS.map(([k, label]) => `<button type="button" class="view${state.view === k ? ' on' : ''}" aria-pressed="${state.view === k}" data-view="${k}">${label}</button>`).join('')}
+    </div>
+
+    ${cats.length ? `
+    <section class="sec">
+      <div class="chips" role="group" aria-label="놀이 종류">
+        <button type="button" class="chip cat${state.cat ? '' : ' on'}" aria-pressed="${!state.cat}" data-cat="">전체</button>
+        ${cats.map(c => `<button type="button" class="chip cat${state.cat === c ? ' on' : ''}" aria-pressed="${state.cat === c}" data-cat="${esc(c)}">${esc(c)}</button>`).join('')}
+      </div>
+    </section>` : ''}
+
+    <section class="sec">
+      <div class="row">
+        <h2>집에 있는 재료</h2>
+        ${sel.size ? '<button type="button" class="minibtn" style="color:var(--muted)" data-clear>전체 해제</button>' : ''}
+      </div>
+      <div class="basebox">
+        ${state.base.size
+          ? `<span class="basetxt"><b>늘 있는 재료</b> ${esc([...state.base].join(' · '))}</span>`
+          : '<span class="basetxt">가위·풀처럼 <b>늘 있는 재료</b>를 저장해두면 매번 안 골라도 돼요</span>'}
+        <button type="button" class="basebtn" data-base-open>${state.base.size ? '바꾸기' : '정하기'}</button>
+      </div>
+      ${groupMaterials(mats).map(([g, list]) => `
+        <div class="mgroup">
+          <span class="mglabel">${esc(g)}</span>
+          <div class="chips">
+            ${list.map(m => `<button type="button" class="chip${sel.has(m) ? ' on' : ''}" aria-pressed="${sel.has(m)}" data-mat="${esc(m)}">${esc(m)}</button>`).join('')}
+          </div>
+        </div>`).join('')}
+    </section>
+
+    <section class="sec">${results}</section>
+
+    ${shop ? `<div class="shopcard">${shop}</div>` : ''}
+
+    ${footerHTML()}`;
+}
+
+/* =========================================================
+   골라줘
+   ========================================================= */
+function pickPool() {
+  let pool = filteredPlays();
+  if (state.selected.size) pool = splitByMaterials(pool).ready;
+  if (!pool.length) pool = playsForAge();
+  const fresh = pool.filter(p => !state.done.has(p.id));
+  return fresh.length ? fresh : pool;
+}
+
+function openPick() {
+  const pool = pickPool();
+  if (!pool.length) return;
+  let next = pool[Math.floor(Math.random() * pool.length)];
+  if (pool.length > 1 && state.picked && next.id === state.picked) {
+    const rest = pool.filter(p => p.id !== state.picked);
+    next = rest[Math.floor(Math.random() * rest.length)];
+  }
+  state.picked = next.id;
+  const keys = Object.keys(CHARS);
+  const who = keys[Math.floor(Math.random() * keys.length)];
+  layerEl.innerHTML = `
+    <div class="layer" data-layer>
+      <div class="sheet" role="dialog" aria-modal="true" aria-label="오늘의 놀이">
+        ${charImg(who, 'sheetchar')}
+        <h2>오늘은 이거 어때?</h2>
+        ${cardHTML(next, '', 0)}
+        <div class="sheetbtns">
+          <button type="button" class="sbtn" data-repick>다른 거</button>
+          <button type="button" class="sbtn go" data-go="${esc(next.id)}">이걸로 할래요</button>
+        </div>
+        <button type="button" class="sclose" data-close-layer>닫기</button>
+      </div>
+    </div>`;
+}
+
+function closeLayer() { layerEl.innerHTML = ''; state.quiz = null; }
+
+/* =========================================================
+   우리 집 기본 재료
+   ========================================================= */
+function openBaseSheet() {
+  const keep = layerEl.querySelector('.sheet');
+  const top = keep ? keep.scrollTop : 0;
+  layerEl.innerHTML = `
+    <div class="layer" data-layer>
+      <div class="sheet" role="dialog" aria-modal="true" aria-label="늘 있는 재료">
+        ${charImg('raccoon', 'sheetchar')}
+        <h2>우리 집에 늘 있는 재료</h2>
+        <p>여기서 고른 재료는 매번 안 골라도 있는 걸로 쳐요.<br>이 폰에만 저장돼요.</p>
+        ${groupMaterials(allMaterials()).map(([g, list]) => `
+          <div>
+            <span class="mglabel">${esc(g)}</span>
+            <div class="chips">
+              ${list.map(m => `<button type="button" class="chip base${state.base.has(m) ? ' on' : ''}" aria-pressed="${state.base.has(m)}" data-base-toggle="${esc(m)}">${esc(m)}</button>`).join('')}
+            </div>
+          </div>`).join('')}
+        <button type="button" class="sbtn go" data-base-done>다 골랐어요</button>
+      </div>
+    </div>`;
+  const sh = layerEl.querySelector('.sheet');
+  if (sh) sh.scrollTop = top;
+}
+
+/* =========================================================
+   아이 모드
+   ========================================================= */
+function openLockSheet() {
+  layerEl.innerHTML = `
+    <div class="layer" data-layer>
+      <div class="sheet" role="dialog" aria-modal="true" aria-label="아이 모드">
+        ${charImg('bear', 'sheetchar')}
+        <h2>아이 모드를 켤까요?</h2>
+        <p>영상과 일시정지 버튼만 남고 나머지는 숨겨져요.<br>지금 맞춰둔 재생 속도와 구간반복은 그대로 유지돼요.</p>
+        <p>전화나 홈 버튼까지 막으려면<br>휴대폰 자체 잠금 기능을 같이 써주세요.</p>
+        <div class="sheetbtns">
+          <a class="sbtn" href="#guide-lock" data-sub style="display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--ink)">휴대폰 잠금 방법</a>
+          <button type="button" class="sbtn go" data-lock-on>아이 모드 켜기</button>
+        </div>
+        <button type="button" class="sclose" data-close-layer>닫기</button>
+      </div>
+    </div>`;
+}
+
+function newQuiz() {
+  const a = 2 + Math.floor(Math.random() * 8);
+  const b = 2 + Math.floor(Math.random() * 8);
+  state.quiz = { a, b, input: '' };
+}
+
+function openUnlock(message) {
+  if (!state.quiz) newQuiz();
+  const q = state.quiz;
+  const ans = String(q.a * q.b);
+  const boxes = [];
+  for (let i = 0; i < ans.length; i++) boxes.push(`<span>${esc(q.input[i] || '')}</span>`);
+  layerEl.innerHTML = `
+    <div class="layer" data-layer data-kidlayer>
+      <div class="sheet" role="dialog" aria-modal="true" aria-label="아이 모드 풀기">
+        <h2>엄마 아빠만 풀 수 있어요</h2>
+        <p>아래 곱셈의 답을 눌러주세요</p>
+        <div class="quiz">${q.a} × ${q.b} = ?</div>
+        <div class="answer${message ? ' bad' : ''}">${boxes.join('')}</div>
+        <div class="msg" role="status">${message ? esc(message) : ''}</div>
+        <div class="pad">
+          ${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => `<button type="button" class="key" data-key="${n}">${n}</button>`).join('')}
+          <span class="key blank"></span>
+          <button type="button" class="key" data-key="0">0</button>
+          <button type="button" class="key" data-key="del" aria-label="지우기">${ICON.erase}</button>
+        </div>
+        <button type="button" class="sclose" data-close-layer>닫기</button>
+      </div>
+    </div>`;
+}
+
+function pressKey(k) {
+  const q = state.quiz;
+  if (!q) return;
+  const ans = String(q.a * q.b);
+  if (k === 'del') { q.input = q.input.slice(0, -1); openUnlock(); return; }
+  if (q.input.length >= ans.length) return;
+  q.input += k;
+  if (q.input.length < ans.length) { openUnlock(); return; }
+  if (q.input === ans) {
+    kidOff();
+    closeLayer();
+  } else {
+    newQuiz();
+    openUnlock('다시 해볼까요? 문제가 바뀌었어요.');
+  }
+}
+
+function kidOn(id) {
+  state.kid = id; save();
+  document.body.classList.add('kid');
+}
+
+function kidOff() {
+  state.kid = null; save();
+  document.body.classList.remove('kid');
+}
+
+/* =========================================================
+   영상 보기 화면
+   ========================================================= */
+let ytApiPromise = null;
+function loadYouTubeAPI() {
+  if (window.YT && window.YT.Player) return Promise.resolve();
+  if (ytApiPromise) return ytApiPromise;
+  ytApiPromise = new Promise(resolve => {
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => { if (prev) prev(); resolve(); };
+    const s = document.createElement('script');
+    s.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(s);
+  });
+  return ytApiPromise;
+}
+
+const player = {
+  yt: null, timer: null, speed: 1, a: null, b: null, playing: false,
+  reset() {
+    if (this.timer) clearInterval(this.timer);
+    this.timer = null;
+    if (this.yt && this.yt.destroy) { try { this.yt.destroy(); } catch (e) {} }
+    this.yt = null; this.a = null; this.b = null; this.speed = 1; this.playing = false;
+    exitBig();
+  }
+};
+
+function itemsFor(p) {
+  return state.items.filter(it => it.play === p.title);
+}
+
+function renderPlayer(p) {
+  const sel = owned();
+  const fav = state.fav.has(p.id);
+  const done = state.done.has(p.id);
+  const items = itemsFor(p);
+  const missing = p.mats.filter(m => !sel.has(m));
+  const shop = shopHTML(missing.length ? '없는 재료 쿠팡에서 보기' : '놀이 재료 쿠팡에서 보기');
+
+  appEl.innerHTML = `
+    ${SPRING}
+    <div class="ptop">
+      <button type="button" class="iconbtn nk" aria-label="뒤로" data-back>${ICON.back}</button>
+      <h1 class="ptitle">${esc(p.title)}</h1>
+      <button type="button" class="iconbtn favbtn nk" aria-label="즐겨찾기" aria-pressed="${fav}" data-fav="${esc(p.id)}">${fav ? ICON.heartFill : ICON.heart}</button>
+      <button type="button" class="iconbtn lockbtn nk" data-lock>${ICON.lock}아이 모드</button>
+    </div>
+
+    <div class="kidbar">
+      ${charImg('bear', '')}
+      <span class="txt">아이 모드예요<br><span style="font-weight:400">다른 버튼은 잠겨 있어요</span></span>
+      <button type="button" data-unlock>${ICON.unlock} 풀기</button>
+    </div>
+
+    <div class="playwrap" id="playwrap">
+      <div class="video"><div id="yt"></div></div>
+      <div class="vsub nk">
+        <span class="src">영상 출처: ${esc(p.channel || 'YouTube')} · YouTube</span>
+        <button type="button" class="bigbtn" data-big>${ICON.expand}크게 보기</button>
+      </div>
+      <div class="bigctrls" id="bigctrls">
+        <button type="button" class="bc nk" aria-label="10초 뒤로" data-rewind>${ICON.rewind}</button>
+        <button type="button" class="bc main" aria-label="재생/일시정지" data-toggle><span data-toggle-ic>${ICON.play}</span></button>
+        <button type="button" class="bc nk" data-repeat data-rep-btn>${ICON.repeat}<span data-rep-label>구간반복</span></button>
+        <div class="bcspeeds nk" role="group" aria-label="재생 속도">
+          ${SPEEDS.map(s => `<button type="button" class="bc${s === 1 ? ' on' : ''}" data-speed="${s}">${s}배</button>`).join('')}
+        </div>
+        <span class="bcab nk" data-ab-text></span>
+        <button type="button" class="bc kidonly" data-unlock>${ICON.unlock}풀기</button>
+        <button type="button" class="bc nk" aria-label="크게 보기 닫기" data-unbig>${ICON.close}</button>
+      </div>
+    </div>
+
+    <section class="sec">
+      <div class="nk">
+        <div class="bar" aria-hidden="true"><div class="done" id="done"></div><div class="ab" id="ab"></div><div class="pos" id="pos"></div></div>
+        <div class="times"><span id="cur">0:00</span><span class="mid" data-ab-text></span><span id="dur">0:00</span></div>
+      </div>
+
+      <div class="ctrls">
+        <button type="button" class="cbtn nk" data-rewind><span class="ic">${ICON.rewind}</span>10초 뒤로</button>
+        <button type="button" class="cbtn main" data-toggle><span class="ic" data-toggle-ic>${ICON.play}</span><span data-toggle-label>재생</span></button>
+        <button type="button" class="cbtn rep nk" data-repeat data-rep-btn><span class="ic">${ICON.repeat}</span><span data-rep-label>구간반복</span></button>
+      </div>
+
+      <div class="speeds nk" role="group" aria-label="재생 속도">
+        ${SPEEDS.map(s => `<button type="button" class="spd${s === 1 ? ' on' : ''}" aria-pressed="${s === 1}" data-speed="${s}">${s}배</button>`).join('')}
+      </div>
+
+      <button type="button" class="donebtn nk" aria-pressed="${done}" data-done="${esc(p.id)}">${done ? ICON.check + '해봤어요' : '다 하면 눌러주세요 · 해봤어요'}</button>
+    </section>
+
+    ${p.mats.length ? `
+    <section class="sec nk">
+      <div class="row"><h2>준비물</h2></div>
+      <div class="mats">
+        ${p.mats.map(m => {
+          const has = sel.has(m);
+          return `<div class="mat${has ? '' : ' no'}">${esc(m)}<small>${state.base.has(m) ? '늘 있음' : has ? '있음' : '없음'}</small></div>`;
+        }).join('')}
+      </div>
+    </section>` : ''}
+
+    ${items.length ? `
+    <section class="sec nk">
+      <div class="row"><h2>이 놀이에 쓰기 좋은 것</h2></div>
+      <div class="items">
+        <p class="disc">${DISCLOSURE}</p>
+        <div class="ilist">
+          ${items.map(it => `
+            <a class="item" href="${esc(it.link)}" target="_blank" rel="noopener sponsored">
+              ${it.img ? `<img class="iimg" src="${esc(it.img)}" alt="" loading="lazy" data-itemimg>` : '<span class="iimg"></span>'}
+              <span class="ibody">
+                <span class="iname">${esc(it.name)}</span>
+                ${it.desc ? `<span class="idesc">${esc(it.desc)}</span>` : ''}
+              </span>
+            </a>`).join('')}
+        </div>
+      </div>
+    </section>` : (shop ? `
+    <section class="sec nk">
+      <div class="buyall" style="display:flex;flex-direction:column;gap:10px">${shop}</div>
+    </section>` : '')}
+
+    ${footerHTML()}`;
+
+  document.body.classList.toggle('kid', state.kid === p.id);
+  window.scrollTo(0, 0);
+  startPlayer(p);
+}
+
+function startPlayer(p) {
+  player.reset();
+  loadYouTubeAPI().then(() => {
+    if (!document.getElementById('yt')) return;
+    player.yt = new YT.Player('yt', {
+      videoId: p.id,
+      playerVars: { playsinline: 1, rel: 0, modestbranding: 1 },
+      events: {
+        onStateChange: e => { player.playing = e.data === YT.PlayerState.PLAYING; updateToggle(); },
+        onError: () => showVideoError(p)
+      }
+    });
+    player.timer = setInterval(tick, 250);
+  });
+}
+
+function showVideoError(p) {
+  const box = document.querySelector('.video');
+  if (!box) return;
+  exitBig();
+  box.innerHTML = `<div class="err">이 영상은 앱 안에서 재생할 수 없어요.
+    <a href="https://www.youtube.com/watch?v=${esc(p.id)}" target="_blank" rel="noopener">유튜브에서 보기</a></div>`;
+  const bigbtn = document.querySelector('[data-big]');
+  if (bigbtn) bigbtn.style.display = 'none';
+}
+
+function tick() {
+  const yt = player.yt;
+  if (!yt || !yt.getCurrentTime) return;
+  const cur = yt.getCurrentTime() || 0;
+  const dur = yt.getDuration ? (yt.getDuration() || 0) : 0;
+
+  if (player.a != null && player.b != null && cur >= player.b) yt.seekTo(player.a, true);
+
+  const pct = v => (dur ? Math.min(100, (v / dur) * 100) : 0) + '%';
+  const done = document.getElementById('done');
+  if (!done) return;
+  done.style.width = pct(cur);
+  document.getElementById('pos').style.left = pct(cur);
+  document.getElementById('cur').textContent = fmt(cur);
+  document.getElementById('dur').textContent = fmt(dur);
+
+  const ab = document.getElementById('ab');
+  if (player.a != null) {
+    const end = player.b != null ? player.b : cur;
+    ab.style.left = pct(player.a);
+    ab.style.width = dur ? Math.max(0, ((end - player.a) / dur) * 100) + '%' : '0%';
+  } else {
+    ab.style.width = '0%';
+  }
+}
+
+function updateToggle() {
+  document.querySelectorAll('[data-toggle-ic]').forEach(el => { el.innerHTML = player.playing ? ICON.pause : ICON.play; });
+  document.querySelectorAll('[data-toggle-label]').forEach(el => { el.textContent = player.playing ? '일시정지' : '재생'; });
+}
+
+function updateRepeatUI() {
+  let label = '구간반복', text = '', on = false;
+  if (player.a != null && player.b == null) {
+    label = '끝점 지정'; on = true;
+    text = '시작 ' + fmt(player.a) + ' · 끝점을 눌러주세요';
+  } else if (player.a != null) {
+    label = '반복 해제'; on = true;
+    text = '구간반복 ' + fmt(player.a) + ' – ' + fmt(player.b);
+  }
+  document.querySelectorAll('[data-rep-btn]').forEach(b => b.classList.toggle('on', on));
+  document.querySelectorAll('[data-rep-label]').forEach(el => { el.textContent = label; });
+  document.querySelectorAll('[data-ab-text]').forEach(el => { el.textContent = text; });
+}
+
+function updateSpeedUI() {
+  document.querySelectorAll('[data-speed]').forEach(b => {
+    const on = Number(b.dataset.speed) === player.speed;
+    b.classList.toggle('on', on);
+    if (b.classList.contains('spd')) b.setAttribute('aria-pressed', on);
+  });
+}
+
+/* ---------- 크게 보기 ---------- */
+function enterBig() {
+  document.body.classList.add('big');
+  const wrap = document.getElementById('playwrap');
+  try {
+    if (wrap && wrap.requestFullscreen) {
+      wrap.requestFullscreen().then(() => {
+        try { screen.orientation.lock('landscape').catch(() => {}); } catch (e) {}
+      }).catch(() => {});
+    }
+  } catch (e) {}
+}
+
+function exitBig() {
+  if (!document.body.classList.contains('big')) return;
+  document.body.classList.remove('big');
+  try { if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); } catch (e) {}
+  try { screen.orientation.unlock(); } catch (e) {}
+}
+
+document.addEventListener('fullscreenchange', () => {
+  // 아이 모드에서는 전체화면이 풀려도 크게 보기 화면은 그대로 둬요
+  if (!document.fullscreenElement && !state.kid) exitBig();
+});
+
+/* =========================================================
+   안내 페이지
+   ========================================================= */
+function subPage(title, body) {
+  appEl.innerHTML = `
+    ${SPRING}
+    <div class="ptop">
+      <button type="button" class="iconbtn" aria-label="뒤로" data-subback>${ICON.back}</button>
+      <h1 class="ptitle">${esc(title)}</h1>
+    </div>
+    <div class="page">${body}</div>
+    ${footerHTML()}`;
+  window.scrollTo(0, 0);
+}
+
+function renderInfo() {
+  subPage('이용 안내', `
+    <h2>이 서비스는</h2>
+    <p>${esc(CONFIG.APP_NAME)}는 집에 있는 재료로 아이와 함께 할 수 있는 놀이 영상을 모아 보여주는 무료 도구예요. 개인이 만들어 운영하며, 영상에 나오는 채널이나 브랜드의 공식 서비스가 아니에요.</p>
+
+    <h2>영상에 대해</h2>
+    <ul>
+      <li>영상은 YouTube에서 재생되며, 모든 영상의 권리는 원래 만든 분께 있어요.</li>
+      <li>영상을 따로 저장하거나 고치지 않고, YouTube 플레이어로 그대로 보여드려요.</li>
+      <li>영상을 볼 때는 <a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener">YouTube 이용약관</a>과 <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google 개인정보처리방침</a>이 함께 적용돼요.</li>
+      <li>영상을 만든 분이 목록에서 빼기를 원하시면 아래 문의처로 알려주세요. 확인하는 대로 바로 빼드려요.</li>
+    </ul>
+
+    <h2>쿠팡 파트너스 안내</h2>
+    <p>${DISCLOSURE} 링크를 통해 구매해도 구매하시는 분이 내는 가격은 같아요.</p>
+
+    <h2>저장되는 정보</h2>
+    <ul>
+      <li>고른 나이·재료, 해봤어요·즐겨찾기 기록, 아이 모드 상태는 지금 쓰는 폰의 브라우저에만 저장돼요.</li>
+      <li>이 정보는 어디로도 보내지 않으며, 이름이나 연락처 같은 개인정보는 받지 않아요.</li>
+      <li>브라우저의 사이트 데이터를 지우면 기록도 함께 지워져요.</li>
+    </ul>
+
+    <h2>문의</h2>
+    <p>${esc(CONFIG.CONTACT)}</p>`);
+}
+
+function renderGuideHome() {
+  const kind = deviceKind();
+  const ios = `
+    <div class="box${kind === 'ios' ? ' hi' : ''}">
+      <h2 style="margin-top:0">아이폰</h2>
+      <ol>
+        <li><b>사파리</b>로 이 페이지를 열어요.</li>
+        <li>아래쪽 <b>공유 버튼</b>(네모에 위쪽 화살표)을 눌러요.</li>
+        <li>목록을 내려서 <b>홈 화면에 추가</b>를 눌러요.</li>
+        <li>오른쪽 위 <b>추가</b>를 누르면 곰 아이콘이 생겨요.</li>
+      </ol>
+    </div>`;
+  const android = `
+    <div class="box${kind === 'android' ? ' hi' : ''}">
+      <h2 style="margin-top:0">갤럭시 · 안드로이드</h2>
+      <ol>
+        <li><b>크롬</b>이나 <b>삼성 인터넷</b>으로 이 페이지를 열어요.</li>
+        <li>오른쪽 위(또는 아래) <b>점 3개</b>나 <b>메뉴</b>를 눌러요.</li>
+        <li><b>홈 화면에 추가</b> 또는 <b>앱 설치</b>를 눌러요.</li>
+      </ol>
+    </div>`;
+  subPage('홈 화면에 추가하는 법', `
+    <p>홈 화면에 추가하면 바탕화면에 곰 아이콘이 생기고, 주소창 없이 앱처럼 열려요.</p>
+    ${installPrompt ? '<button type="button" class="installbtn" data-install>바로 설치하기</button>' : ''}
+    ${kind === 'kakao' ? `<div class="box hi"><b>카카오톡 안에서 열었다면</b><br>카톡 화면 오른쪽 아래(또는 위) 메뉴에서 <b>다른 브라우저로 열기</b>를 눌러 사파리나 크롬으로 연 다음 아래 방법을 따라 해주세요.</div>` : ''}
+    ${kind === 'android' ? android + ios : ios + android}
+    <p class="tip">기종과 버전에 따라 메뉴 이름이 조금 다를 수 있어요.</p>`);
+}
+
+function renderGuideLock() {
+  const kind = deviceKind();
+  const ios = `
+    <div class="box${kind === 'ios' ? ' hi' : ''}">
+      <h2 style="margin-top:0">아이폰 · 사용법 유도 접근</h2>
+      <p>켜두면 이 앱 하나에서 못 나가고, 홈 화면이나 전화로 넘어갈 수 없어요.</p>
+      <ol>
+        <li><b>설정 › 손쉬운 사용 › 사용법 유도 접근</b>을 켜요.</li>
+        <li><b>암호 설정</b>에서 엄마 아빠만 아는 암호를 정해요.</li>
+        <li>이 앱에서 영상을 틀고, <b>측면 버튼</b>(홈 버튼이 있는 폰은 홈 버튼)을 <b>빠르게 세 번</b> 눌러요.</li>
+        <li>누르면 안 되는 곳이 있으면 화면에 손가락으로 동그라미를 그려 막고, <b>시작</b>을 눌러요.</li>
+        <li>끝낼 때는 다시 <b>세 번</b> 누르고 암호를 넣은 뒤 <b>종료</b>를 눌러요.</li>
+      </ol>
+    </div>`;
+  const android = `
+    <div class="box${kind === 'android' ? ' hi' : ''}">
+      <h2 style="margin-top:0">갤럭시 · 앱 고정</h2>
+      <p>켜두면 지금 화면에 고정돼서 다른 앱으로 못 넘어가요.</p>
+      <ol>
+        <li><b>설정</b>에서 <b>앱 고정</b>을 검색해서 켜요. (보통 <b>보안 및 개인정보 보호 › 기타 보안 설정</b> 안에 있어요)</li>
+        <li><b>고정 해제 시 잠금 화면 표시</b>도 켜두면, 풀 때 폰 비밀번호를 물어봐요.</li>
+        <li>이 앱을 연 상태에서 <b>최근 앱</b> 화면을 열고, 위쪽 앱 아이콘을 눌러 <b>이 앱 고정</b>을 눌러요.</li>
+        <li>풀 때는 <b>뒤로 버튼과 최근 앱 버튼을 함께 길게</b> 눌러요. (제스처 사용 시 화면 아래에서 위로 밀어 올린 채 잠깐 기다려요)</li>
+      </ol>
+    </div>`;
+  subPage('휴대폰 잠금 방법', `
+    <p>앱 안의 <b>아이 모드</b>는 우리 앱의 버튼만 잠가요. 전화 걸기, 홈 버튼, 다른 앱으로 나가기까지 막으려면 휴대폰에 있는 잠금 기능을 같이 써주세요.</p>
+    ${kind === 'android' ? android + ios : ios + android}
+    <p class="tip">기종과 버전에 따라 메뉴 이름과 위치가 조금 다를 수 있어요. 설정 화면 위쪽 검색창에서 기능 이름으로 찾으면 빨라요.</p>`);
+}
+
+/* =========================================================
+   화면 전환
+   ========================================================= */
+function route() {
+  // 아이 모드일 때는 잠근 영상 밖으로 못 나가요
+  if (state.kid) {
+    if (state.plays.some(p => p.id === state.kid)) {
+      if (location.hash !== '#play/' + state.kid) { location.replace('#play/' + state.kid); return; }
+    } else {
+      kidOff();
+    }
+  }
+  if (!layerEl.querySelector('[data-kidlayer]')) closeLayer();
+
+  const h = location.hash;
+  if (h === '#info') { player.reset(); renderInfo(); return; }
+  if (h === '#guide-home') { player.reset(); renderGuideHome(); return; }
+  if (h === '#guide-lock') { player.reset(); renderGuideLock(); return; }
+  const m = h.match(/^#play\/([A-Za-z0-9_-]{11})$/);
+  const p = m ? state.plays.find(x => x.id === m[1]) : null;
+  if (p) renderPlayer(p);
+  else { player.reset(); document.body.classList.remove('kid'); renderHome(); }
+}
+
+window.addEventListener('hashchange', route);
+
+/* =========================================================
+   썸네일·상품 이미지가 깨졌을 때
+   ========================================================= */
+document.addEventListener('error', e => {
+  const t = e.target;
+  if (t && t.tagName === 'IMG' && (t.hasAttribute('data-thumb') || t.hasAttribute('data-itemimg'))) t.classList.add('fail');
+}, true);
+document.addEventListener('load', e => {
+  const t = e.target;
+  // 유튜브는 지워진 영상에 120px짜리 회색 기본 그림을 줘요
+  if (t && t.tagName === 'IMG' && t.hasAttribute('data-thumb') && t.naturalWidth > 0 && t.naturalWidth <= 120) t.classList.add('fail');
+}, true);
+
+/* =========================================================
+   버튼 동작
+   ========================================================= */
+document.addEventListener('click', e => {
+  // 안내 페이지로 가는 링크: 돌아올 곳을 기억해요
+  const sub = e.target.closest('a[data-sub]');
+  if (sub) {
+    if (state.kid) { e.preventDefault(); return; }
+    returnHash = location.hash;
+    closeLayer();
+    return;
+  }
+
+  const t = e.target.closest('button, [data-layer]');
+  if (!t) return;
+  const d = t.dataset;
+
+  // 아래 창
+  if ('layer' in d) { if (e.target === t) closeLayer(); return; }
+  if ('closeLayer' in d) { closeLayer(); return; }
+  if ('repick' in d) { openPick(); return; }
+  if (d.go) { closeLayer(); cameFromHome = true; location.hash = 'play/' + d.go; return; }
+  if ('pick' in d) { openPick(); return; }
+  if (d.key) { pressKey(d.key); return; }
+
+  // 아이 모드
+  if ('lock' in d) { openLockSheet(); return; }
+  if ('lockOn' in d) {
+    const m = location.hash.match(/^#play\/([A-Za-z0-9_-]{11})$/);
+    if (m) kidOn(m[1]);
+    closeLayer();
+    return;
+  }
+  if ('unlock' in d) { state.quiz = null; newQuiz(); openUnlock(); return; }
+  if (state.kid && !('toggle' in d)) return; // 아이 모드에선 재생/일시정지 말고는 안 눌려요
+
+  // 홈
+  if (d.age) { state.age = d.age; state.cat = ''; save(); renderHome(); return; }
+  if (d.view) { state.view = d.view; save(); renderHome(); return; }
+  if (d.cat != null && t.classList.contains('cat')) { state.cat = d.cat; save(); renderHome(); return; }
+  if (d.mat != null) {
+    state.selected.has(d.mat) ? state.selected.delete(d.mat) : state.selected.add(d.mat);
+    save(); renderHome(); return;
+  }
+  if ('clear' in d) { state.selected.clear(); save(); renderHome(); return; }
+  if ('seenNew' in d) { state.seenNew = newInfo().latest; save(); renderHome(); return; }
+  if ('closeHometip' in d) { state.homeTipClosed = true; save(); renderHome(); return; }
+  if ('baseOpen' in d) { openBaseSheet(); return; }
+  if (d.baseToggle != null) {
+    const m = d.baseToggle;
+    if (state.base.has(m)) state.base.delete(m);
+    else { state.base.add(m); state.selected.delete(m); }
+    save(); openBaseSheet(); return;
+  }
+  if ('baseDone' in d) { closeLayer(); renderHome(); return; }
+  if ('install' in d) {
+    if (installPrompt) {
+      installPrompt.prompt();
+      installPrompt.userChoice.finally(() => { installPrompt = null; route(); });
+    }
+    return;
+  }
+  if (d.play) {
+    if (layerEl.contains(t)) closeLayer();
+    cameFromHome = true; location.hash = 'play/' + d.play; return;
+  }
+
+  // 화면 이동
+  if ('back' in d) {
+    if (cameFromHome) { cameFromHome = false; history.back(); }
+    else location.hash = '';
+    return;
+  }
+  if ('subback' in d) {
+    const to = returnHash; returnHash = '';
+    location.hash = to && to !== location.hash ? to.replace(/^#/, '') : '';
+    return;
+  }
+
+  // 즐겨찾기·해봤어요 (영상이 끊기지 않게 버튼만 바꿔요)
+  if (d.fav) {
+    const on = !state.fav.has(d.fav);
+    on ? state.fav.add(d.fav) : state.fav.delete(d.fav);
+    save();
+    t.setAttribute('aria-pressed', on);
+    t.innerHTML = on ? ICON.heartFill : ICON.heart;
+    return;
+  }
+  if (d.done) {
+    const on = !state.done.has(d.done);
+    on ? state.done.add(d.done) : state.done.delete(d.done);
+    save();
+    t.setAttribute('aria-pressed', on);
+    t.innerHTML = on ? ICON.check + '해봤어요' : '다 하면 눌러주세요 · 해봤어요';
+    return;
+  }
+
+  // 크게 보기
+  if ('big' in d) { enterBig(); return; }
+  if ('unbig' in d) { exitBig(); return; }
+
+  // 재생 조작
+  const yt = player.yt;
+  if (!yt || !yt.getPlayerState) return;
+
+  if ('rewind' in d) { yt.seekTo(Math.max(0, (yt.getCurrentTime() || 0) - 10), true); return; }
+  if ('toggle' in d) {
+    yt.getPlayerState() === YT.PlayerState.PLAYING ? yt.pauseVideo() : yt.playVideo();
+    return;
+  }
+  if ('repeat' in d) {
+    const cur = yt.getCurrentTime() || 0;
+    if (player.a == null) player.a = cur;
+    else if (player.b == null) {
+      if (cur > player.a + 0.5) player.b = cur;
+      else player.a = null; // 끝점이 시작점보다 앞이면 처음부터 다시
+    } else { player.a = null; player.b = null; }
+    updateRepeatUI(); tick();
+    return;
+  }
+  if (d.speed) {
+    player.speed = Number(d.speed);
+    yt.setPlaybackRate(player.speed);
+    updateSpeedUI();
+  }
+});
+
+/* =========================================================
+   시작
+   ========================================================= */
+async function fetchCSV(url) {
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) throw new Error(res.status);
+  return parseCSV(await res.text());
+}
+
+async function init() {
+  renderHome();
+  const tasks = [];
+
+  if (CONFIG.SHEET_CSV_URL) {
+    tasks.push(fetchCSV(CONFIG.SHEET_CSV_URL).then(rows => {
+      const plays = toPlays(rows);
+      if (!plays.length) throw new Error('empty');
+      state.plays = plays;
+    }).catch(() => {
+      state.loadError = true;
+      state.plays = toPlays(parseCSV(SAMPLE_CSV));
+    }));
+  } else {
+    state.plays = toPlays(parseCSV(SAMPLE_CSV));
+  }
+
+  if (CONFIG.ITEMS_CSV_URL) {
+    tasks.push(fetchCSV(CONFIG.ITEMS_CSV_URL).then(rows => { state.items = toItems(rows); }).catch(() => {}));
+  }
+
+  await Promise.all(tasks);
+  route();
+}
+
+init();
+</script>
+</body>
+</html>
