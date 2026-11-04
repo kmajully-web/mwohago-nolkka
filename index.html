@@ -726,11 +726,12 @@ function footerHTML(extra) {
    ========================================================= */
 function renderHome() {
   const list = filteredPlays();
-  const mats = materialsFor(playsForAge()).filter(m => !state.base.has(m));
+  // 재료 버튼은 지금 보이는 놀이(보기·분류 반영)에 쓰이는 재료만 보여줘요
+  const mats = materialsFor(list).filter(m => !state.base.has(m));
   const cats = catsForAge();
   const sel = state.selected;
   const ni = newInfo();
-  if (state.cat && !cats.includes(state.cat)) state.cat = '';
+  if (state.plays.length && state.cat && !cats.includes(state.cat)) state.cat = '';
 
   const emptyByView = {
     all: '이 나이에 맞는 놀이가 아직 없어요.',
@@ -749,14 +750,49 @@ function renderHome() {
       ${list.length ? `<div class="grid">${list.map((p, i) => cardHTML(p, '', i)).join('')}</div>` : emptyHTML(emptyByView[state.view])}`;
   } else {
     const { ready, near } = splitByMaterials(list);
+    let closest = '';
+    if (!ready.length && !near.length && list.length) {
+      // 딱 맞는 게 없으면 부족한 재료가 적은 순서로 보여줘요
+      const own = owned();
+      const ranked = list
+        .map(p => ({ p, miss: p.mats.filter(m => !own.has(m)) }))
+        .sort((a, b) => a.miss.length - b.miss.length)
+        .slice(0, 6);
+      closest = `
+        <div class="row" style="margin-top:22px"><h2>재료가 조금 더 필요한 놀이</h2><span class="count">${ranked.length}개</span></div>
+        <div class="grid">${ranked.map((r, i) => cardHTML(r.p, r.miss.join('·'), i)).join('')}</div>`;
+    }
     results = `
       <div class="row"><h2>이 재료로 할 수 있어요</h2><span class="count">${ready.length}개</span></div>
       ${ready.length ? `<div class="grid">${ready.map((p, i) => cardHTML(p, '', i)).join('')}</div>`
-                     : emptyHTML('고른 재료만으로 할 수 있는 놀이는 아직 없어요.<br>재료를 하나 더 골라보세요.')}
+                     : emptyHTML(near.length || closest
+                         ? '고른 재료만으로 할 수 있는 놀이는 아직 없어요.<br>아래 놀이는 재료가 조금만 더 있으면 돼요.'
+                         : '고른 재료만으로 할 수 있는 놀이는 아직 없어요.<br>재료를 하나 더 골라보세요.')}
       ${near.length ? `
         <div class="row" style="margin-top:22px"><h2>하나만 더 있으면 돼요</h2><span class="count">${near.length}개</span></div>
-        <div class="grid">${near.map((n, i) => cardHTML(n.p, n.missing, i + 1)).join('')}</div>` : ''}`;
+        <div class="grid">${near.map((n, i) => cardHTML(n.p, n.missing, i + 1)).join('')}</div>` : ''}
+      ${closest}`;
   }
+
+  // 이 나이에 그 분류 놀이가 적으면 옆 나이 놀이도 보여줘요
+  let neighbor = '';
+  if (state.cat && state.plays.length) {
+    const sameCat = playsForAge().filter(p => p.cats.includes(state.cat));
+    if (sameCat.length < 3) {
+      const idx = AGES.indexOf(state.age);
+      const nearAges = [AGES[idx - 1], AGES[idx + 1]].filter(Boolean);
+      const shown = new Set(sameCat.map(p => p.id));
+      const extra = state.plays.filter(p =>
+        !shown.has(p.id) && p.cats.includes(state.cat) && p.ages.some(a => nearAges.includes(a))
+      ).slice(0, 6);
+      neighbor = `
+        <div class="notice" style="margin:22px 0 0">이 나이엔 ${esc(state.cat)} 놀이가 아직 ${sameCat.length}개뿐이에요.${extra.length ? ' 옆 나이 놀이도 함께 보세요.' : ''}</div>
+        ${extra.length ? `
+          <div class="row" style="margin-top:18px"><h2>옆 나이 ${esc(state.cat)} 놀이</h2><span class="count">${extra.length}개</span></div>
+          <div class="grid">${extra.map((p, i) => cardHTML(p, '', i + 2)).join('')}</div>` : ''}`;
+    }
+  }
+  results += neighbor;
 
   const showHomeTip = !state.homeTipClosed && !isStandalone();
   const shop = shopHTML('놀이 재료 한 번에 사기');
