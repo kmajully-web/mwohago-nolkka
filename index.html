@@ -87,6 +87,14 @@
   .hd h1 { margin: 2px 0 0; font-size: 34px; line-height: 1.1; }
   .t1 { color: #D9483A; } .t2 { color: #C98A00; } .t3 { color: var(--mint); } .t4 { color: var(--sky); } .t5 { color: var(--violet); }
 
+  .searchbox { position: relative; margin: 12px 20px 0; }
+  .searchbox input { width: 100%; min-height: 48px; border-radius: 14px; border: 2px solid var(--line); background: #fff; padding: 0 46px 0 42px; font-size: 16px; font-family: inherit; color: var(--ink); -webkit-appearance: none; appearance: none; }
+  .searchbox input:focus { outline: none; border-color: var(--ink); }
+  .searchbox input::-webkit-search-cancel-button { display: none; }
+  .searchbox .sicon2 { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--muted); display: flex; pointer-events: none; }
+  .searchbox .qclear { position: absolute; right: 2px; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border: none; background: none; color: var(--muted); display: flex; align-items: center; justify-content: center; }
+  .searchbox .qclear[hidden] { display: none; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .pickbtn { width: calc(100% - 40px); margin: 12px 20px 0; min-height: 52px; border-radius: 16px; border: none; background: var(--yellow); font-size: 18px; display: flex; align-items: center; justify-content: center; gap: 8px; }
   .tabs { margin: 14px 20px 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; padding: 4px; background: #fff; border-radius: 16px; border: 1.5px solid var(--line); }
   .tab { min-height: 42px; border-radius: 12px; border: none; background: transparent; color: var(--muted); font-size: 13px; padding: 0 2px; }
@@ -490,6 +498,7 @@ KBS TV유치원 지니와 손유희,https://www.youtube.com/watch?v=sEpc9PZTzjg,
    아이콘
    ========================================================= */
 const ICON = {
+  search: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>',
   back: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>',
   rewind: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>',
   pause: '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>',
@@ -670,6 +679,7 @@ function save() {
 const saved = loadSaved();
 const asArr = v => (Array.isArray(v) ? v : []);
 const state = {
+  q: '',
   plays: [],
   items: [],
   loadError: false,
@@ -822,7 +832,62 @@ function footerHTML(extra) {
 /* =========================================================
    홈 화면
    ========================================================= */
-function renderHome() {
+/* =========================================================
+   검색 (나이·주제와 상관없이 전체에서 찾아요)
+   ========================================================= */
+function normText(s) { return String(s || '').toLowerCase().replace(/\s+/g, ''); }
+
+function searchList() {
+  const q = normText(state.q);
+  if (!q) return [];
+  return state.plays.filter(p => normText(p.title).includes(q) || normText(p.channel).includes(q));
+}
+
+function searchBoxHTML() {
+  return `
+    <div class="searchbox" role="search">
+      <span class="sicon2" aria-hidden="true">${ICON.search}</span>
+      <label for="q" class="sr">놀이 이름·채널 검색</label>
+      <input type="search" id="q" placeholder="놀이 이름·채널 검색" value="${esc(state.q)}" autocomplete="off" enterkeyhint="search">
+      <button type="button" class="qclear" aria-label="검색어 지우기" data-qclear ${state.q ? '' : 'hidden'}>${ICON.close}</button>
+    </div>`;
+}
+
+function searchResultsHTML() {
+  const list = searchList();
+  return `
+    <section class="sec">
+      <div class="row"><h2>"${esc(state.q.trim())}" 검색 결과 <span class="count">${list.length}개</span></h2></div>
+      ${list.length ? `<div class="grid">${list.map((p, i) => cardHTML(p, '', i)).join('')}</div>`
+        : emptyHTML('찾는 놀이가 없어요.<br>다른 말로 찾아보거나 띄어쓰기 없이 적어보세요.')}
+      <p style="margin:12px 0 0"><button type="button" class="minibtn" data-qclear>검색 지우고 처음 화면으로</button></p>
+    </section>`;
+}
+
+function homeBodyOrSearch() {
+  return state.q.trim() ? searchResultsHTML() : homeBodyHTML();
+}
+
+function updateHomeBody() {
+  const el = document.getElementById('homebody');
+  if (!el) return;
+  el.innerHTML = homeBodyOrSearch();
+  const c = document.querySelector('.qclear');
+  if (c) c.hidden = !state.q;
+}
+
+document.addEventListener('input', e => {
+  if (!e.target || e.target.id !== 'q') return;
+  state.q = e.target.value;
+  updateHomeBody();
+});
+
+document.addEventListener('keydown', e => {
+  if (e.target && e.target.id === 'q' && e.key === 'Enter') e.target.blur();
+});
+
+
+function homeBodyHTML() {
   const list = filteredPlays();
   // 재료 버튼은 지금 보이는 놀이(보기·분류 반영)에 쓰이는 재료만 보여줘요
   const mats = materialsFor(list).filter(m => !state.base.has(m));
@@ -895,18 +960,7 @@ function renderHome() {
   const showHomeTip = !state.homeTipClosed && !isStandalone();
   const shop = shopHTML('놀이 재료 한 번에 사기');
 
-  appEl.innerHTML = `
-    ${SPRING}
-    ${DOODLES}
-    <header class="hd">
-      ${charImg(AGE_CHAR[state.age], 'hdchar')}
-      <div>
-        <div class="sub">오늘의 놀이 스케치북</div>
-        <h1 class="jua"><span class="t1">뭐</span><span class="t2">하</span><span class="t3">고</span> <span class="t4">놀</span><span class="t5">까</span>?</h1>
-      </div>
-    </header>
-
-    <button type="button" class="pickbtn jua" data-pick>${ICON.dice}오늘의 놀이 골라줘</button>
+  return `
 
     <div class="tabs" role="tablist" aria-label="아이 나이">
       ${AGES.map(a => `<button type="button" role="tab" class="tab${a === state.age ? ' on' : ''}" aria-selected="${a === state.age}" data-age="${esc(a)}">${esc(a)}</button>`).join('')}
@@ -963,6 +1017,27 @@ function renderHome() {
     <section class="sec">${results}</section>
 
     ${shop ? `<div class="shopcard">${shop}</div>` : ''}
+
+    `;
+}
+
+function renderHome() {
+  appEl.innerHTML = `
+    ${SPRING}
+    ${DOODLES}
+    <header class="hd">
+      ${charImg(AGE_CHAR[state.age], 'hdchar')}
+      <div>
+        <div class="sub">오늘의 놀이 스케치북</div>
+        <h1 class="jua"><span class="t1">뭐</span><span class="t2">하</span><span class="t3">고</span> <span class="t4">놀</span><span class="t5">까</span>?</h1>
+      </div>
+    </header>
+
+    <button type="button" class="pickbtn jua" data-pick>${ICON.dice}오늘의 놀이 골라줘</button>
+
+    ${searchBoxHTML()}
+
+    <div id="homebody">${homeBodyOrSearch()}</div>
 
     ${footerHTML()}`;
 }
@@ -1504,6 +1579,7 @@ document.addEventListener('click', e => {
   const t = e.target.closest('button, [data-layer]');
   if (!t) return;
   const d = t.dataset;
+  if ('qclear' in d) { state.q = ''; renderHome(); const q = document.getElementById('q'); if (q) q.focus(); return; }
 
   // 아래 창
   if ('layer' in d) { if (e.target === t) closeLayer(); return; }
